@@ -7,38 +7,42 @@ import { AtSign, User, Pencil } from 'lucide-react';
 import ProfileImage from '@/assets/images/profile/ProfilePhoto.png';
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchProfile,
   putProfile,
   updateProfileImage,
 } from '@/features/membership/profileThunks';
+import { logout } from '@/features/membership/authSlice';
 import { RootState, AppDispatch } from '@/store/store';
 import { UpdateProfileData } from '@/types/membership/Profile';
 import UploadFile from './UploadFile';
+import { clearAllStorage } from '@/store/authForage';
 
 const schema = Yup.object({
   email: Yup.string().email('Email tidak valid').required('Email wajib diisi'),
   first_name: Yup.string().required('Nama depan wajib diisi'),
   last_name: Yup.string().required('Nama belakang wajib diisi'),
-  profile_image: Yup.string().required('Profile image wajib diisi'),
+  profile_image: Yup.string().optional(),
 });
 
 const Accounts: React.FC = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { profile, status, error } = useSelector(
     (state: RootState) => state.profile
   );
 
-  const [imageFile, setImageFile] = useState<File | null>(null);
   const [profileImagePreview, setProfileImagePreview] = useState<
     string | undefined
-  >(profile?.data?.profile_image || ProfileImage);
+  >(profile?.data?.profile_image ? profile?.data?.profile_image : ProfileImage);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   console.log('status', status);
   console.log('profile', profile);
   console.log('error', error);
+  console.log('profileImagePreview', profileImagePreview);
 
   const {
     control,
@@ -69,16 +73,24 @@ const Accounts: React.FC = () => {
         email: profile?.data?.email,
         first_name: profile?.data?.first_name,
         last_name: profile?.data?.last_name,
-        profile_image: profile?.data?.profile_image,
       });
     }
   }, [profile, reset]);
 
-  const onSubmit: SubmitHandler<UpdateProfileData> = (data) => {
-    if (imageFile) {
-      dispatch(updateProfileImage(imageFile));
+  const onSubmit: SubmitHandler<UpdateProfileData> = async (data) => {
+    const payload: UpdateProfileData = {
+      first_name: data.first_name,
+      last_name: data.last_name,
+    };
+    try {
+      const updateProfileData = await dispatch(putProfile(payload));
+      console.log('updateProfileData', updateProfileData);
+      dispatch(fetchProfile());
+      toast.success('Updated profile successfully');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error('Failed to update profile');
     }
-    dispatch(putProfile(data));
   };
 
   const handleUpload = (file: File) => {
@@ -87,8 +99,31 @@ const Accounts: React.FC = () => {
       setProfileImagePreview(fileReader.result as string);
     };
     fileReader.readAsDataURL(file);
-    setImageFile(file);
     setIsModalOpen(false);
+    dispatch(updateProfileImage(file))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchProfile());
+      })
+      .catch((error) => {
+        toast.error(`Failed to upload profile image: ${error}`);
+      });
+  };
+
+  const handleLogout = async () => {
+    try {
+      dispatch(logout());
+      await clearAllStorage();
+      await new Promise((resolve) => {
+        toast.error('Logout berhasil', {
+          delay: 1500,
+          onClose: resolve,
+        });
+        navigate('/signin');
+      });
+    } catch (error) {
+      toast.error(`Failed to logout: ${error}`);
+    }
   };
 
   const onError = () => {
@@ -100,7 +135,7 @@ const Accounts: React.FC = () => {
   };
 
   return (
-    <>
+    <section className="p-4">
       <div className="overflow-hidden">
         <div className="max-w-2xl mx-auto flex flex-col justify-center pb-10">
           <div className="flex justify-center">
@@ -108,7 +143,7 @@ const Accounts: React.FC = () => {
               <div className="flex flex-col gap-2 text-center text-sm font-medium text-black relative">
                 <div className="relative w-28 h-full mx-auto">
                   <img
-                    src={profileImagePreview}
+                    src={profile?.data?.profile_image || profileImagePreview}
                     className="w-28 h-full object-cover rounded-full"
                     alt="Profile"
                   />
@@ -145,6 +180,7 @@ const Accounts: React.FC = () => {
                           type="text"
                           placeholder="Masukkan Email Anda"
                           className={`pl-8 ${errors.email ? 'border-red-500' : 'border-gray-300'} border rounded-md focus:ring-0`}
+                          disabled
                         />
                         {errors.email && (
                           <p className="text-red-500 text-sm">
@@ -220,7 +256,12 @@ const Accounts: React.FC = () => {
               <Button className="w-full mt-14" type="submit">
                 Edit Profile
               </Button>
-              <Button className="w-full" variant="outline" type="button">
+              <Button
+                className="w-full"
+                variant="outline"
+                type="button"
+                onClick={handleLogout}
+              >
                 Logout
               </Button>
             </div>
@@ -232,7 +273,7 @@ const Accounts: React.FC = () => {
         onClose={() => setIsModalOpen(false)} // Tutup modal
         onUpload={handleUpload} // Fungsi untuk menangani upload
       />
-    </>
+    </section>
   );
 };
 

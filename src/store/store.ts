@@ -6,6 +6,7 @@ import servicesReducer from '@/features/information/servicesSlice';
 import balanceReducer from '@/features/transaction/balanceSlice';
 import transactionHistoryReducer from '@/features/transaction/transactionHistorySlice';
 import topUpReducer from '@/features/transaction/topUpSlice';
+import transactionReducer from '@/features/transaction/transactionSlice';
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     balance: balanceReducer,
     transactionHistory: transactionHistoryReducer,
     topUp: topUpReducer,
+    transaction: transactionReducer,
   },
 });
 

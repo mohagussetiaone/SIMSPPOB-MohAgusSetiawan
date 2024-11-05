@@ -1,39 +1,59 @@
 import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Input } from '@/components/ui/input';
 import { Banknote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 import { useServiceDetail } from '@/store/useServiceDetail';
+import { useDispatch } from 'react-redux';
+import { transactionUser } from '@/features/transaction/transactionThunks';
+import { AppDispatch } from '@/store/store';
 
 const schema = Yup.object({
-  nominal: Yup.number()
+  total_amount: Yup.number()
     .required('Nominal wajib diisi')
     .min(10000, 'Nominal minimal adalah 10.000')
     .max(1000000, 'Nominal maksimal adalah 1.000.000'),
+  service_code: Yup.string().optional(),
 });
 
 type FormData = Yup.InferType<typeof schema>;
 
 const Payment: React.FC = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
   const { serviceDetail } = useServiceDetail();
+  console.log('serviceDetail', serviceDetail);
+
   const {
     control,
     watch,
+    setValue,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
     defaultValues: {
-      nominal: serviceDetail?.service_tariff,
+      total_amount: serviceDetail?.service_tariff,
+      service_code: serviceDetail?.service_code,
     },
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
+    try {
+      const topUpResponse = await dispatch(transactionUser(data));
+      console.log('topUpResponse', topUpResponse);
+      setValue('total_amount', 0);
+      navigate('/transaction');
+      toast.success('Updated profile successfully');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error('Failed to update profile');
+    }
   };
 
   const onError = () => {
@@ -61,19 +81,19 @@ const Payment: React.FC = () => {
         <form onSubmit={handleSubmit(onSubmit, onError)} className="mt-10">
           <div className="relative h-10 w-full">
             <Controller
-              name="nominal"
+              name="total_amount"
               control={control}
               render={({ field }) => (
                 <>
                   <Banknote
                     className={`absolute left-2 top-2.5 w-4 h-4 
-                  ${!watch('nominal') ? 'text-gray-400' : errors.nominal ? 'text-red-500' : 'text-black'}`}
+                  ${!watch('total_amount') ? 'text-gray-400' : errors.total_amount ? 'text-red-500' : 'text-black'}`}
                   />
                   <Input
                     {...field}
                     type="number"
-                    placeholder="Masukkan nominal"
-                    className={`pl-8 ${errors.nominal ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-black'} border rounded-md  focus:ring-0`}
+                    placeholder="Masukkan Total Amount"
+                    className={`pl-8 ${errors.total_amount ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-black'} border rounded-md  focus:ring-0`}
                     min={10000}
                     max={1000000}
                   />

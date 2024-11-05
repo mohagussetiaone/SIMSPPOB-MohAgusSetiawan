@@ -1,14 +1,17 @@
 import localforage from 'localforage';
 import api from '../apiService';
-import { TopupData, TopUpResponse } from '@/types/transaction/Topup';
+import {
+  TransactionData,
+  TransactionResponse,
+} from '@/types/transaction/Transaction';
 
 const getAuthToken = async () => await localforage.getItem<string>('authToken');
 
-export const topup = async (
-  data: TopupData
-): Promise<{ data: TopUpResponse }> => {
+export const transaction = async (
+  data: TransactionData
+): Promise<{ data: TransactionResponse }> => {
   const token = await getAuthToken();
-  return api.post('/topup', data, {
+  return api.post('/transaction', data, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

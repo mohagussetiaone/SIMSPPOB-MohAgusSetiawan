@@ -20,7 +20,7 @@ const ServiceCategory: React.FC = () => {
   }, [dispatch]);
 
   return (
-    <div className="w-full py-6">
+    <div className="w-full py-6 p-4">
       <div className="flex flex-wrap justify-start">
         {services?.data?.map((service, index) => (
           <div

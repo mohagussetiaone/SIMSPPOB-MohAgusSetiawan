@@ -44,7 +44,7 @@ const Banner: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className="p-4">
       {isLoading && <Loading />}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4 my-6">
         <div className="col-span-1 md:col-span-5">

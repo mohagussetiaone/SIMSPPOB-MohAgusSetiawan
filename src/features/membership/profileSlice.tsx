@@ -51,15 +51,10 @@ const profileSlice = createSlice({
         state.status = 'loading';
         state.error = null;
       })
-      .addCase(
-        updateProfileImage.fulfilled,
-        (state, action: PayloadAction<string>) => {
-          state.status = 'succeeded';
-          if (state.profile) {
-            state.profile.data.profile_image = action.payload;
-          }
-        }
-      )
+      .addCase(updateProfileImage.fulfilled, (state) => {
+        state.status = 'succeeded';
+        state.error = null;
+      })
       .addCase(updateProfileImage.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string;

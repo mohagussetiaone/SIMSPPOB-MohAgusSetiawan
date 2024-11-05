@@ -27,11 +27,9 @@ export const updateProfile = async (
   });
 };
 
-export const uploadProfileImage = async (
-  formData: FormData
-): Promise<{ data: { profile_image: string } }> => {
+export const uploadProfileImage = async (formData: FormData): Promise<void> => {
   const token = await getAuthToken();
-  return api.post('/profile/image', formData, {
+  return api.put('/profile/image', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
       Authorization: `Bearer ${token}`,

@@ -49,11 +49,10 @@ export const updateProfileImage = createAsyncThunk(
   'profile/updateProfileImage',
   async (file: File, { rejectWithValue }) => {
     const formData = new FormData();
-    formData.append('profile_image', file);
-
+    formData.append('file', file);
     try {
       const response = await uploadProfileImage(formData);
-      return response.data.profile_image; // Assuming the response contains the updated image URL
+      return response; // Assuming the response contains the updated image URL
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
         return rejectWithValue(
