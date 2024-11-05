@@ -1,16 +1,92 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
 import './App.css';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Layout from './layouts';
+import Dashboard from './pages/dashboard';
+import Payment from './pages/dashboard/components/Payment';
+import Topup from './pages/topup';
+import Transaction from './pages/transaction';
+import Accounts from './pages/accounts';
+import SignIn from './pages/auth/signin';
+import SignUp from './pages/auth/signup';
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    // loader: authLoader,
+    element: <Layout />,
+    children: [
+      {
+        path: '/',
+        // loader: authLoader,
+        Component() {
+          return <Dashboard />;
+        },
+      },
+      {
+        path: '/payment/:idPayment',
+        // loader: authLoader,
+        Component() {
+          return <Payment />;
+        },
+      },
+      {
+        path: '/topup',
+        // loader: authLoader,
+        Component() {
+          return <Topup />;
+        },
+      },
+      {
+        path: '/transaction',
+        // loader: authLoader,
+        Component() {
+          return <Transaction />;
+        },
+      },
+      {
+        path: '/account',
+        // loader: authLoader,
+        Component() {
+          return <Accounts />;
+        },
+      },
+    ],
+  },
+  {
+    path: '/signin',
+    // loader: authLoader,
+    Component: SignIn,
+  },
+  {
+    path: '/signup',
+    // loader: authLoader,
+    Component: SignUp,
+  },
+  // { path: "/reset-password", loader: authLoader, Component: ResetPassword },
+  // {
+  //   path: "*",
+  //   element: <NotFound />,
+  // },
+]);
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
-      <div>
-        <h3>OKe</h3>
-      </div>
+      <ToastContainer
+        position="bottom-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      <RouterProvider router={router} />
     </>
   );
 }
