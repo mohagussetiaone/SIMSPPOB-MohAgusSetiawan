@@ -5,13 +5,18 @@ export interface User {
   password: string;
 }
 
-export interface AuthResponse {
-  token: string;
-  user: {
-    id: number;
-    name: string;
-    email: string;
+export interface AuthResponseSignIn {
+  status: number;
+  message: string;
+  data: {
+    token: string;
   };
+}
+
+export interface AuthResponseSignUp {
+  status: number;
+  message: string;
+  data: null;
 }
 
 export interface SigninData {
@@ -27,7 +32,7 @@ export interface SignupData {
 }
 
 export interface AuthState {
-  user: AuthResponse['user'] | null;
+  user: User | null;
   token: string | null;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;

@@ -1,36 +1,94 @@
-import { useForm, Controller } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Input } from '@/components/ui/input';
 import { AtSign, User, Pencil } from 'lucide-react';
-import ProfileImage from '@/assets/images/profile/Profile Photo.png';
+import ProfileImage from '@/assets/images/profile/ProfilePhoto.png';
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchProfile,
+  putProfile,
+  updateProfileImage,
+} from '@/features/membership/profileThunks';
+import { RootState, AppDispatch } from '@/store/store';
+import { UpdateProfileData } from '@/types/membership/Profile';
+import UploadFile from './UploadFile';
 
 const schema = Yup.object({
   email: Yup.string().email('Email tidak valid').required('Email wajib diisi'),
-  firstName: Yup.string().required('Email wajib diisi'),
-  lastName: Yup.string().required('Email wajib diisi'),
-  password: Yup.string()
-    .min(6, 'Password minimal 6 karakter')
-    .required('Password wajib diisi'),
+  first_name: Yup.string().required('Nama depan wajib diisi'),
+  last_name: Yup.string().required('Nama belakang wajib diisi'),
+  profile_image: Yup.string().required('Profile image wajib diisi'),
 });
 
-type FormData = Yup.InferType<typeof schema>;
+const Accounts: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { profile, status, error } = useSelector(
+    (state: RootState) => state.profile
+  );
 
-export default function Example() {
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [profileImagePreview, setProfileImagePreview] = useState<
+    string | undefined
+  >(profile?.data?.profile_image || ProfileImage);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  console.log('status', status);
+  console.log('profile', profile);
+  console.log('error', error);
+
   const {
     control,
     watch,
+    reset,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
+    defaultValues: {
+      email: profile?.data?.email || '',
+      first_name: profile?.data?.first_name || '',
+      last_name: profile?.data?.last_name || '',
+      profile_image: profile?.data?.profile_image || '',
+    },
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  // Load profile data on component mount
+  useEffect(() => {
+    dispatch(fetchProfile());
+  }, [dispatch]);
+
+  // Update form fields when profile data is loaded
+  useEffect(() => {
+    if (profile) {
+      reset({
+        email: profile?.data?.email,
+        first_name: profile?.data?.first_name,
+        last_name: profile?.data?.last_name,
+        profile_image: profile?.data?.profile_image,
+      });
+    }
+  }, [profile, reset]);
+
+  const onSubmit: SubmitHandler<UpdateProfileData> = (data) => {
+    if (imageFile) {
+      dispatch(updateProfileImage(imageFile));
+    }
+    dispatch(putProfile(data));
+  };
+
+  const handleUpload = (file: File) => {
+    const fileReader = new FileReader();
+    fileReader.onloadend = () => {
+      setProfileImagePreview(fileReader.result as string);
+    };
+    fileReader.readAsDataURL(file);
+    setImageFile(file);
+    setIsModalOpen(false);
   };
 
   const onError = () => {
@@ -42,112 +100,140 @@ export default function Example() {
   };
 
   return (
-    <div className="overflow-hidden">
-      <div className="max-w-2xl mx-auto flex flex-col justify-center pb-10">
-        <div className="flex justify-center">
-          <div className="flex flex-col justify-center items-center">
-            <div className="flex flex-col gap-2 text-center text-sm font-medium text-black relative">
-              <div className="relative w-28 h-full mx-auto">
-                <img
-                  src={ProfileImage}
-                  className="w-28 h-full object-cover rounded-full"
-                  alt="SimsLogo.jpg"
-                />
-                <button
-                  className="absolute bottom-0 right-0 p-2 bg-white border-2 border-gray-200 rounded-full hover:bg-gray-100"
-                  onClick={() => alert('Edit Image')}
-                >
-                  <Pencil className="w-4 h-4" />
-                </button>
+    <>
+      <div className="overflow-hidden">
+        <div className="max-w-2xl mx-auto flex flex-col justify-center pb-10">
+          <div className="flex justify-center">
+            <div className="flex flex-col justify-center items-center">
+              <div className="flex flex-col gap-2 text-center text-sm font-medium text-black relative">
+                <div className="relative w-28 h-full mx-auto">
+                  <img
+                    src={profileImagePreview}
+                    className="w-28 h-full object-cover rounded-full"
+                    alt="Profile"
+                  />
+                  <button
+                    className="absolute bottom-0 right-0 p-2 bg-white border-2 border-gray-200 rounded-full hover:bg-gray-100"
+                    onClick={() => setIsModalOpen(true)} // Buka modal saat tombol diklik
+                  >
+                    <Pencil className="w-4 h-4" />
+                  </button>
+                </div>
+                <span className="text-2xl">
+                  {profile?.data?.first_name} {profile?.data?.last_name}
+                </span>
               </div>
-              <span className="text-2xl">Kristanto Wibowo</span>
             </div>
           </div>
-        </div>
 
-        <form onSubmit={handleSubmit(onSubmit, onError)} className="mt-5">
-          <div className="space-y-10">
-            <div className=" h-10 w-full">
-              <Controller
-                name="email"
-                control={control}
-                render={({ field }) => (
-                  <div className="flex flex-col gap-2">
-                    <label htmlFor="email">Email</label>
-                    <div className="relative">
-                      <AtSign
-                        className={`absolute left-2 top-2.5 w-4 h-4 
+          <form onSubmit={handleSubmit(onSubmit, onError)} className="mt-5">
+            <div className="space-y-10">
+              <div className="h-10 w-full">
+                <Controller
+                  name="email"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="flex flex-col gap-2">
+                      <label htmlFor="email">Email</label>
+                      <div className="relative">
+                        <AtSign
+                          className={`absolute left-2 top-2.5 w-4 h-4 
                           ${!watch('email') ? 'text-gray-400' : errors.email ? 'text-red-500' : 'text-black'}`}
-                      />
-                      <Input
-                        {...field}
-                        type="text"
-                        placeholder="Masukkan Email Anda"
-                        className={`pl-8 ${errors.email ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-black'} border rounded-md  focus:ring-0`}
-                      />
+                        />
+                        <Input
+                          {...field}
+                          type="text"
+                          placeholder="Masukkan Email Anda"
+                          className={`pl-8 ${errors.email ? 'border-red-500' : 'border-gray-300'} border rounded-md focus:ring-0`}
+                        />
+                        {errors.email && (
+                          <p className="text-red-500 text-sm">
+                            {errors.email.message}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
-              />
+                  )}
+                />
+              </div>
+
+              <div className="h-10 w-full">
+                <Controller
+                  name="first_name"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="flex flex-col gap-2">
+                      <label htmlFor="first_name">Nama Depan</label>
+                      <div className="relative">
+                        <User
+                          className={`absolute left-2 top-2.5 w-4 h-4 
+                          ${!watch('first_name') ? 'text-gray-400' : errors.first_name ? 'text-red-500' : 'text-black'}`}
+                        />
+                        <Input
+                          {...field}
+                          type="text"
+                          placeholder="Nama Depan"
+                          className={`pl-8 ${errors.first_name ? 'border-red-500' : 'border-gray-300'} border rounded-md focus:ring-0`}
+                        />
+                        {errors.first_name && (
+                          <p className="text-red-500 text-sm">
+                            {errors.first_name.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                />
+              </div>
+
+              <div className="h-10 w-full">
+                <Controller
+                  name="last_name"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="flex flex-col gap-2">
+                      <label htmlFor="last_name">Nama Belakang</label>
+                      <div className="relative">
+                        <User
+                          className={`absolute left-2 top-2.5 w-4 h-4 
+                          ${!watch('last_name') ? 'text-gray-400' : errors.last_name ? 'text-red-500' : 'text-black'}`}
+                        />
+                        <Input
+                          {...field}
+                          type="text"
+                          placeholder="Nama Belakang"
+                          className={`pl-8 ${errors.last_name ? 'border-red-500' : 'border-gray-300'} border rounded-md focus:ring-0`}
+                        />
+                        {errors.last_name && (
+                          <p className="text-red-500 text-sm">
+                            {errors.last_name.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                />
+              </div>
             </div>
 
-            <div className="h-10 w-full">
-              <Controller
-                name="firstName"
-                control={control}
-                render={({ field }) => (
-                  <div className="flex flex-col gap-2">
-                    <label htmlFor="firstName">Nama Depan</label>
-                    <div className="relative">
-                      <User
-                        className={`absolute left-2 top-2.5 w-4 h-4 
-                          ${!watch('firstName') ? 'text-gray-400' : errors.firstName ? 'text-red-500' : 'text-black'}`}
-                      />
-                      <Input
-                        {...field}
-                        type="text"
-                        placeholder="Nama Depan"
-                        className={`pl-8 ${errors.email ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-black'} border rounded-md  focus:ring-0`}
-                      />
-                    </div>
-                  </div>
-                )}
-              />
+            <div className="flex flex-col gap-4">
+              <Button className="w-full mt-14" type="submit">
+                Edit Profile
+              </Button>
+              <Button className="w-full" variant="outline" type="button">
+                Logout
+              </Button>
             </div>
-            <div className="h-10 w-full">
-              <Controller
-                name="lastName"
-                control={control}
-                render={({ field }) => (
-                  <div className="flex flex-col gap-2">
-                    <label htmlFor="lastName">Nama Belakang</label>
-                    <div className="relative">
-                      <User
-                        className={`absolute left-2 top-2.5 w-4 h-4 
-                          ${!watch('lastName') ? 'text-gray-400' : errors.lastName ? 'text-red-500' : 'text-black'}`}
-                      />
-                      <Input
-                        {...field}
-                        type="text"
-                        placeholder="Nama Belakang"
-                        className={`pl-8 ${errors.email ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-black'} border rounded-md  focus:ring-0`}
-                      />
-                    </div>
-                  </div>
-                )}
-              />
-            </div>
-          </div>
-          <div className="flex flex-col gap-4">
-            <Button className="w-full mt-14" type="submit">
-              Edit Profile
-            </Button>
-            <Button className="w-full" variant={'outline'} type="submit">
-              Logout
-            </Button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
+      <UploadFile
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)} // Tutup modal
+        onUpload={handleUpload} // Fungsi untuk menangani upload
+      />
+    </>
   );
-}
+};
+
+export default Accounts;

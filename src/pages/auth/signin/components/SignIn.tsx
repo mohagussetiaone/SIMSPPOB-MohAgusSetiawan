@@ -1,25 +1,33 @@
 import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import * as Yup from 'yup';
+import localforage from 'localforage';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Input } from '@/components/ui/input';
 import { AtSign, LockKeyhole, Eye, EyeOff } from 'lucide-react';
 import IlustrasiImage from '@/assets/images/signin/IllustrasiLogin.png';
 import logoSims from '@/assets/images/logo/Logo.png';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/store/store';
+import { signinUser } from '@/features/membership/authThunks';
 
 const schema = Yup.object({
-  email: Yup.string().email('Email tidak valid').required('Email wajib diisi'),
+  email: Yup.string()
+    .email('Parameter email tidak valid')
+    .required('Email wajib diisi'),
   password: Yup.string()
-    .min(6, 'Password minimal 6 karakter')
+    .min(8, 'Password minimal 8 karakter')
     .required('Password wajib diisi'),
 });
 
 type FormData = Yup.InferType<typeof schema>;
 
-export default function Example() {
+const SignIn = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -36,8 +44,20 @@ export default function Example() {
     },
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  const onSubmit = async (data: FormData) => {
+    const { email, password } = data;
+    const resultAction = await dispatch(signinUser({ email, password }));
+    if (signinUser.fulfilled.match(resultAction)) {
+      console.log('Login berhasil:', resultAction.payload);
+      await localforage.setItem('authToken', resultAction.payload.data.token);
+      toast.success('Login berhasil');
+      // setTimeout(() => {
+      navigate('/');
+      // }, 2500);
+    } else {
+      toast.error('Login gagal. Periksa email dan password Anda.');
+      console.log('Login gagal:', resultAction.payload);
+    }
   };
 
   const onError = () => {
@@ -140,4 +160,6 @@ export default function Example() {
       </div>
     </div>
   );
-}
+};
+
+export default SignIn;

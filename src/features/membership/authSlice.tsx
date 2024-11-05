@@ -1,6 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { signinUser, signupUser } from './authThunks';
-import { AuthState, AuthResponse } from '@/types/Auth';
+import {
+  AuthState,
+  AuthResponseSignIn,
+  AuthResponseSignUp,
+} from '@/types/membership/Auth';
 
 const initialState: AuthState = {
   user: null,
@@ -26,10 +30,9 @@ const authSlice = createSlice({
       })
       .addCase(
         signinUser.fulfilled,
-        (state, action: PayloadAction<AuthResponse>) => {
+        (state, action: PayloadAction<AuthResponseSignIn>) => {
           state.status = 'succeeded';
-          state.user = action.payload.user;
-          state.token = action.payload.token;
+          state.token = action.payload.data.token;
         }
       )
       .addCase(signinUser.rejected, (state, action) => {
@@ -42,10 +45,14 @@ const authSlice = createSlice({
       })
       .addCase(
         signupUser.fulfilled,
-        (state, action: PayloadAction<AuthResponse>) => {
-          state.status = 'succeeded';
-          state.user = action.payload.user;
-          state.token = action.payload.token;
+        (state, action: PayloadAction<AuthResponseSignUp>) => {
+          if (action.payload.status === 0) {
+            state.status = 'succeeded';
+            state.error = action.payload.message;
+          } else {
+            state.status = 'failed';
+            state.error = action.payload.message;
+          }
         }
       )
       .addCase(signupUser.rejected, (state, action) => {

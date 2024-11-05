@@ -1,10 +1,9 @@
-import Topup from './components/Topup';
+import NotFoundPage from './components/NotFound';
 import { useAuthValidation } from '@/hooks/useLoader';
-
 const index = () => {
   useAuthValidation();
 
-  return <Topup />;
+  return <NotFoundPage />;
 };
 
 export default index;

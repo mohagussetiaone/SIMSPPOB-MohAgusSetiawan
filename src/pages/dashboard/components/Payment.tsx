@@ -1,5 +1,4 @@
 import React from 'react';
-import ListrikImg from '@/assets/images/categoryServices/Listrik.png';
 import { useForm, Controller } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -7,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Banknote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-toastify';
+import { useServiceDetail } from '@/store/useServiceDetail';
 
 const schema = Yup.object({
   nominal: Yup.number()
@@ -18,6 +18,7 @@ const schema = Yup.object({
 type FormData = Yup.InferType<typeof schema>;
 
 const Payment: React.FC = () => {
+  const { serviceDetail } = useServiceDetail();
   const {
     control,
     watch,
@@ -26,6 +27,9 @@ const Payment: React.FC = () => {
   } = useForm<FormData>({
     resolver: yupResolver(schema),
     mode: 'onChange',
+    defaultValues: {
+      nominal: serviceDetail?.service_tariff,
+    },
   });
 
   const onSubmit = (data: FormData) => {
@@ -45,9 +49,13 @@ const Payment: React.FC = () => {
       <div className="flex flex-col justify-start">
         <h1 className="text-2xl">Pembayaran </h1>
         <div className="flex gap-2">
-          <img src={ListrikImg} alt="listrikImg.png" className="w-10" />
+          <img
+            src={serviceDetail?.service_icon}
+            alt={serviceDetail?.service_name}
+            className="w-10"
+          />
           <p className="flex justify-center items-center text-center font-semibold">
-            Listrik Prabayar
+            {serviceDetail?.service_name}
           </p>
         </div>
         <form onSubmit={handleSubmit(onSubmit, onError)} className="mt-10">

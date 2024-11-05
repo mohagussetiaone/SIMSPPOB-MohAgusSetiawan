@@ -4,10 +4,10 @@ import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Input } from '@/components/ui/input';
 import { AtSign, LockKeyhole, User, Eye, EyeOff } from 'lucide-react';
-import IlustrasiImage from '@/assets/images/signin/Illustrasi Login.png';
+import IlustrasiImage from '@/assets/images/signin/IllustrasiLogin.png';
 import logoSims from '@/assets/images/logo/Logo.png';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store/store';
@@ -15,7 +15,9 @@ import { signupUser } from '@/features/membership/authThunks';
 
 // Schema Validasi Yup
 const schema = Yup.object({
-  email: Yup.string().email('Email tidak valid').required('Email wajib diisi'),
+  email: Yup.string()
+    .email('Parameter email tidak sesuai format')
+    .required('Email wajib diisi'),
   first_name: Yup.string()
     .min(3, 'Nama depan minimal 3 karakter')
     .required('Nama depan wajib diisi'),
@@ -23,11 +25,11 @@ const schema = Yup.object({
     .min(3, 'Nama belakang minimal 3 karakter')
     .required('Nama belakang wajib diisi'),
   password: Yup.string()
-    .min(6, 'Password minimal 6 karakter')
+    .min(8, 'Password minimal 8 karakter')
     .required('Password wajib diisi'),
   confirmPassword: Yup.string()
     .required('Konfirmasi Password wajib diisi')
-    .min(6, 'Konfirmasi Password minimal 6 karakter')
+    .min(8, 'Konfirmasi Password minimal 8 karakter')
     .test(
       'passwords-match',
       'Konfirmasi Password harus sama dengan Password',
@@ -40,7 +42,8 @@ const schema = Yup.object({
 
 type FormData = Yup.InferType<typeof schema>;
 
-export default function Example() {
+const SignUp = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -69,6 +72,8 @@ export default function Example() {
     );
     if (signupUser.fulfilled.match(resultAction)) {
       console.log('Login berhasil:', resultAction.payload);
+      toast.success('Akun berhasil dibuat');
+      navigate('/signin');
     } else {
       toast.error('Login gagal. Periksa email dan password Anda.');
       console.log('Login gagal:', resultAction.payload);
@@ -247,4 +252,6 @@ export default function Example() {
       </div>
     </div>
   );
-}
+};
+
+export default SignUp;

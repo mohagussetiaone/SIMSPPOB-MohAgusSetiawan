@@ -1,6 +1,7 @@
 import './App.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import { authLoader } from '@/hooks/useLoader';
 import 'react-toastify/dist/ReactToastify.css';
 import Layout from './layouts';
 import Dashboard from './pages/dashboard';
@@ -10,44 +11,45 @@ import Transaction from './pages/transaction';
 import Accounts from './pages/accounts';
 import SignIn from './pages/auth/signin';
 import SignUp from './pages/auth/signup';
+import NotFoundPage from './pages/notfound';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    // loader: authLoader,
+    loader: authLoader,
     element: <Layout />,
     children: [
       {
         path: '/',
-        // loader: authLoader,
+        loader: authLoader,
         Component() {
           return <Dashboard />;
         },
       },
       {
         path: '/payment/:idPayment',
-        // loader: authLoader,
+        loader: authLoader,
         Component() {
           return <Payment />;
         },
       },
       {
         path: '/topup',
-        // loader: authLoader,
+        loader: authLoader,
         Component() {
           return <Topup />;
         },
       },
       {
         path: '/transaction',
-        // loader: authLoader,
+        loader: authLoader,
         Component() {
           return <Transaction />;
         },
       },
       {
         path: '/account',
-        // loader: authLoader,
+        loader: authLoader,
         Component() {
           return <Accounts />;
         },
@@ -56,19 +58,18 @@ const router = createBrowserRouter([
   },
   {
     path: '/signin',
-    // loader: authLoader,
+    loader: authLoader,
     Component: SignIn,
   },
   {
     path: '/signup',
-    // loader: authLoader,
+    loader: authLoader,
     Component: SignUp,
   },
-  // { path: "/reset-password", loader: authLoader, Component: ResetPassword },
-  // {
-  //   path: "*",
-  //   element: <NotFound />,
-  // },
+  {
+    path: '*',
+    element: <NotFoundPage />,
+  },
 ]);
 
 function App() {
