@@ -5,9 +5,7 @@ import { RootState, AppDispatch } from '@/store/store';
 
 const BannerPromo: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { banner, status, error } = useSelector(
-    (state: RootState) => state.banner
-  );
+  const { banner } = useSelector((state: RootState) => state.banner);
 
   console.log('dataBanner', banner);
 

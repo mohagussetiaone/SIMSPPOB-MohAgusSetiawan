@@ -19,6 +19,8 @@ import { RootState, AppDispatch } from '@/store/store';
 import { UpdateProfileData } from '@/types/membership/Profile';
 import UploadFile from './UploadFile';
 import { clearAllStorage } from '@/store/authForage';
+import Loading from '@/components/loading';
+import Error from '@/components/error';
 
 const schema = Yup.object({
   email: Yup.string().email('Email tidak valid').required('Email wajib diisi'),
@@ -30,9 +32,11 @@ const schema = Yup.object({
 const Accounts: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { profile, status, error } = useSelector(
-    (state: RootState) => state.profile
-  );
+  const {
+    profile,
+    status: profileStatus,
+    error: profileError,
+  } = useSelector((state: RootState) => state.profile);
 
   const [profileImagePreview, setProfileImagePreview] = useState<
     string | undefined
@@ -41,7 +45,6 @@ const Accounts: React.FC = () => {
 
   console.log('status', status);
   console.log('profile', profile);
-  console.log('error', error);
   console.log('profileImagePreview', profileImagePreview);
 
   const {
@@ -61,12 +64,10 @@ const Accounts: React.FC = () => {
     },
   });
 
-  // Load profile data on component mount
   useEffect(() => {
     dispatch(fetchProfile());
   }, [dispatch]);
 
-  // Update form fields when profile data is loaded
   useEffect(() => {
     if (profile) {
       reset({
@@ -134,8 +135,16 @@ const Accounts: React.FC = () => {
     });
   };
 
+  const isLoading = profileStatus === 'loading';
+
+  const hasError = profileError;
+  if (hasError) {
+    return <Error />;
+  }
+
   return (
     <section className="p-4">
+      {isLoading && <Loading />}
       <div className="overflow-hidden">
         <div className="max-w-2xl mx-auto flex flex-col justify-center pb-10">
           <div className="flex justify-center">
@@ -147,12 +156,19 @@ const Accounts: React.FC = () => {
                     className="w-28 h-full object-cover rounded-full"
                     alt="Profile"
                   />
-                  <button
-                    className="absolute bottom-0 right-0 p-2 bg-white border-2 border-gray-200 rounded-full hover:bg-gray-100"
-                    onClick={() => setIsModalOpen(true)} // Buka modal saat tombol diklik
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="absolute bottom-0 right-0 rounded-full w-8 h-8"
+                    onClick={() => setIsModalOpen(true)}
                   >
                     <Pencil className="w-4 h-4" />
-                  </button>
+                  </Button>
+                  <UploadFile
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onUpload={handleUpload}
+                  />
                 </div>
                 <span className="text-2xl">
                   {profile?.data?.first_name} {profile?.data?.last_name}
@@ -268,11 +284,6 @@ const Accounts: React.FC = () => {
           </form>
         </div>
       </div>
-      <UploadFile
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)} // Tutup modal
-        onUpload={handleUpload} // Fungsi untuk menangani upload
-      />
     </section>
   );
 };

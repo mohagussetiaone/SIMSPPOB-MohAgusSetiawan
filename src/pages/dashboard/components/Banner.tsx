@@ -1,32 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
+import ProfileImage from '@/assets/images/profile/ProfilePhoto.png';
+import backgroundSaldo from '@/assets/images/background/BackgroundSaldo.png';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProfile } from '@/features/membership/profileThunks';
 import { fetchBalance } from '@/features/transaction/balanceThunks';
 import { RootState, AppDispatch } from '@/store/store';
-import { Eye, EyeOff } from 'lucide-react';
-import ProfileImage from '@/assets/images/profile/ProfilePhoto.png';
-import backgroundSaldo from '@/assets/images/background/BackgroundSaldo.png';
-import Loading from '@/components/loading';
-import Error from '@/components/error';
 
 const Banner: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { profile, status, error } = useSelector(
-    (state: RootState) => state.profile
-  );
-
-  const {
-    balance,
-    status: balanceStatus,
-    error: balanceError,
-  } = useSelector((state: RootState) => state.balance);
-  console.log('profile', profile);
-  console.log('status', status);
-  console.log('error', error);
-
-  console.log('balance', balance);
-
   const [isSaldoVisible, setIsSaldoVisible] = useState(false);
+  const { profile } = useSelector((state: RootState) => state.profile);
+  const { balance } = useSelector((state: RootState) => state.balance);
 
   useEffect(() => {
     dispatch(fetchProfile());
@@ -37,24 +22,17 @@ const Banner: React.FC = () => {
     setIsSaldoVisible(!isSaldoVisible);
   };
 
-  const isLoading = status === 'loading' || balanceStatus === 'loading';
-
-  if (error || balanceError) {
-    return <Error />;
-  }
-
   return (
     <div className="p-4">
-      {isLoading && <Loading />}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4 my-6">
         <div className="col-span-1 md:col-span-5">
           <div className="flex flex-col">
             <img
               src={profile?.data.profile_image || ProfileImage}
               alt="Profile"
-              className="w-20 h-auto object-cover"
+              className="w-20 h-auto object-cover rounded-full"
             />
-            <h3 className="flex">Selamat Datang,</h3>
+            <h3 className="flex mt-4">Selamat Datang,</h3>
             <h3 className="flex text-3xl font-semibold">
               {profile?.data.first_name} {profile?.data.last_name}
             </h3>
@@ -71,7 +49,12 @@ const Banner: React.FC = () => {
           >
             <h6 className="font-bold">Saldo Anda</h6>
             <p className="text-3xl font-bold">
-              Rp. {isSaldoVisible ? balance?.data.balance : '••••••••'}
+              Rp.{' '}
+              {isSaldoVisible
+                ? balance?.data.balance
+                  ? balance?.data.balance
+                  : 0
+                : '••••••••'}
             </p>
             <span
               className="flex gap-0.5 pt-2 cursor-pointer"

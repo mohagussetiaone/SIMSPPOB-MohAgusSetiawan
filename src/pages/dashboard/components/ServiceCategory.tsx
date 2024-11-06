@@ -20,12 +20,12 @@ const ServiceCategory: React.FC = () => {
   }, [dispatch]);
 
   return (
-    <div className="w-full py-6 p-4">
-      <div className="flex flex-wrap justify-start">
+    <div className="w-full py-6 px-4 md:px-0">
+      <div className="flex gap-3 md:gap-0 flex-wrap justify-start">
         {services?.data?.map((service, index) => (
           <div
             key={index}
-            className="flex flex-col gap-2 items-center w-24"
+            className="flex flex-col gap-2 items-center w-20 md:w-24"
             onClick={() => {
               setServiceDetail(service);
               navigate(`/payment/${service.service_code.toLowerCase()}`);
@@ -35,7 +35,7 @@ const ServiceCategory: React.FC = () => {
               <img
                 src={service.service_icon}
                 alt={service.service_icon}
-                className="w-12"
+                className="w-10"
               />
             </div>
             <p className="block text-center whitespace-normal text-sm">

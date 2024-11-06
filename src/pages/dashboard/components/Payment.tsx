@@ -26,7 +26,6 @@ const Payment: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { serviceDetail } = useServiceDetail();
-  console.log('serviceDetail', serviceDetail);
 
   const {
     control,

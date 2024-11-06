@@ -1,19 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
+import 'dayjs/locale/id';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchTransactionHistory } from '@/features/transaction/transactionHistoryThunks';
 import { RootState, AppDispatch } from '@/store/store';
+import Loading from '@/components/loading';
+import Error from '@/components/error';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.locale('id');
 
 const ITEMS_PER_PAGE_OPTIONS = [5, 10, 15, 20];
 
 const Transaction: React.FC = () => {
   const [offset, setOffset] = useState<number>(0);
-  const [limit, setLimit] = useState<number>(ITEMS_PER_PAGE_OPTIONS[0]); // Default to the first option
+  const [limit, setLimit] = useState<number>(ITEMS_PER_PAGE_OPTIONS[0]);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const dispatch = useDispatch<AppDispatch>();
-  const { transactionHistory, status, error } = useSelector(
-    (state: RootState) => state.transactionHistory
-  );
+  const {
+    transactionHistory,
+    status: transactionHistoryStatus,
+    error: transactionHistoryError,
+  } = useSelector((state: RootState) => state.transactionHistory);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,23 +41,29 @@ const Transaction: React.FC = () => {
   }, [dispatch, offset, limit]);
 
   const handleMoreClick = () => {
-    setOffset((prevOffset) => prevOffset + limit); // Update offset dengan n + limit
+    setOffset((prevOffset) => prevOffset + limit);
   };
 
   const handleLimitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newLimit = Number(e.target.value);
     setLimit(newLimit);
-    setOffset(0); // Reset offset ketika limit diubah
+    setOffset(0);
   };
+
+  const isLoading = transactionHistoryStatus === 'loading';
+  const hasError = transactionHistoryError;
+
+  if (hasError) {
+    return <Error />;
+  }
 
   return (
     <section className="p-4">
+      {isLoading && <Loading />}
       <div className="flex justify-between">
         <div>
           <h1 className="text-2xl mb-6 font-semibold">Semua Transaksi</h1>
         </div>
-
-        {/* Dropdown for selecting limit */}
         <div className="mb-4">
           <label htmlFor="limitSelect" className="mr-2 text-sm font-medium">
             Tampilkan:
@@ -92,13 +109,15 @@ const Transaction: React.FC = () => {
                   </h1>
                   <p className="text-sm text-gray-400">
                     {transaction.created_on
-                      ? dayjs(transaction.created_on).format('DD MMMM YYYY')
+                      ? dayjs(transaction.created_on)
+                          .tz('Asia/Jakarta')
+                          .format('DD MMMM YYYY HH:mm [WIB]')
                       : ''}
                   </p>
                 </div>
               </div>
               <div>
-                <h3>{transaction.description}</h3>
+                <h3 className="text-sm">{transaction.description}</h3>
               </div>
             </div>
           ))}
