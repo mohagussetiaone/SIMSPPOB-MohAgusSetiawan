@@ -2,7 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from '../views/Navbar';
 import Banner from '@/pages/dashboard/components/Banner';
 
-export default function Layout() {
+const Layout: React.FC = () => {
   const location = useLocation();
   const isAccountsPage = location.pathname === '/account';
 
@@ -21,4 +21,6 @@ export default function Layout() {
       </div>
     </div>
   );
-}
+};
+
+export default Layout;

@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import Loading from '@/components/loading';
 import Error from '@/components/error';
 
-const Dashboard = () => {
+const Dashboard: React.FC = () => {
   const { status: profileStatus, error: profileError } = useSelector(
     (state: RootState) => state.profile
   );

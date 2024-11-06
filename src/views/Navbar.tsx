@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/sheet';
 import Routes from './Routes';
 
-const Navbar = () => {
+const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   useEffect(() => {

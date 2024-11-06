@@ -72,7 +72,7 @@ const router = createBrowserRouter([
   },
 ]);
 
-const App = () => {
+const App: React.FC = () => {
   return (
     <>
       <ToastContainer
