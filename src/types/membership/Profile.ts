@@ -1,4 +1,6 @@
 export interface Profile {
+  status: number;
+  message: string;
   data: {
     email: string;
     first_name: string;

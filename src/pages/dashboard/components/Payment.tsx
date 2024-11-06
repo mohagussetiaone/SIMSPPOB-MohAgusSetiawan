@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { useServiceDetail } from '@/store/useServiceDetail';
 import { useDispatch } from 'react-redux';
 import { transactionUser } from '@/features/transaction/transactionThunks';
+import { fetchBalance } from '@/features/transaction/balanceThunks';
 import { AppDispatch } from '@/store/store';
 
 const schema = Yup.object({
@@ -26,6 +27,7 @@ const Payment: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { serviceDetail } = useServiceDetail();
+  console.log('serviceDetail', serviceDetail);
 
   const {
     control,
@@ -44,14 +46,18 @@ const Payment: React.FC = () => {
 
   const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
     try {
-      const topUpResponse = await dispatch(transactionUser(data));
-      console.log('topUpResponse', topUpResponse);
-      setValue('total_amount', 0);
-      navigate('/transaction');
-      toast.success('Updated profile successfully');
+      const paymentResults = await dispatch(transactionUser(data));
+      console.log('paymentResults', paymentResults);
+      if (transactionUser.fulfilled.match(paymentResults)) {
+        setValue('total_amount', 0);
+        dispatch(fetchBalance());
+        navigate('/transaction');
+        toast.success(`${paymentResults?.payload?.message}`);
+      } else {
+        toast.error(`${paymentResults?.payload}`);
+      }
     } catch (error) {
-      console.error('Error updating profile:', error);
-      toast.error('Failed to update profile');
+      toast.error('Failed to payment');
     }
   };
 
@@ -64,10 +70,10 @@ const Payment: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="p-4">
       <div className="flex flex-col justify-start">
         <h1 className="text-2xl">Pembayaran </h1>
-        <div className="flex gap-2">
+        <div className="flex gap-2 mt-2">
           <img
             src={serviceDetail?.service_icon}
             alt={serviceDetail?.service_name}

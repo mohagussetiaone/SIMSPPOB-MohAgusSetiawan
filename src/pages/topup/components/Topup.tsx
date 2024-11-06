@@ -37,12 +37,16 @@ const Topup: React.FC = () => {
 
   const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
     try {
-      const topUpResponse = await dispatch(topupUser(data));
-      console.log('topUpResponse', topUpResponse);
-      dispatch(fetchBalance());
-      setValue('top_up_amount', 0);
-      navigate('/');
-      toast.success('Updated profile successfully');
+      const topUpResults = await dispatch(topupUser(data));
+      console.log('topUpResults', topUpResults);
+      if (topupUser.fulfilled.match(topUpResults)) {
+        dispatch(fetchBalance());
+        setValue('top_up_amount', 0);
+        navigate('/');
+        toast.success(`${topUpResults?.payload?.message}`);
+      } else {
+        toast.error(`${topUpResults?.payload}`);
+      }
     } catch (error) {
       console.error('Error updating profile:', error);
       toast.error('Failed to update profile');

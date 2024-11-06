@@ -10,7 +10,7 @@ export const fetchTransactionHistory = createAsyncThunk<
   'transaction/fetchTransactionHistory',
   async ({ params }, { rejectWithValue }) => {
     try {
-      const response = await getTransactionHistory(params); // Panggil dengan objek params
+      const response = await getTransactionHistory(params);
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError && error.response) {

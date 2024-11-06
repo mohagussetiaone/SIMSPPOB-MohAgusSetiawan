@@ -64,15 +64,21 @@ const SignUp = () => {
   });
 
   const onSubmit = async (data: FormData) => {
-    const { email, first_name, last_name, password } = data;
-    const resultAction = await dispatch(
-      signupUser({ email, first_name, last_name, password })
-    );
-    if (signupUser.fulfilled.match(resultAction)) {
-      toast.success('Akun berhasil dibuat');
-      navigate('/signin');
-    } else {
-      toast.error('Login gagal. Periksa email dan password Anda.');
+    try {
+      const { email, first_name, last_name, password } = data;
+      const resultAction = await dispatch(
+        signupUser({ email, first_name, last_name, password })
+      );
+
+      if (signupUser.fulfilled.match(resultAction)) {
+        toast.success(`${resultAction?.payload?.message}`);
+        navigate('/signin');
+      } else {
+        toast.error(`${resultAction?.payload}`);
+      }
+    } catch (error) {
+      console.log('error', error);
+      toast.error('Terjadi kesalahan. Silakan coba lagi nanti.');
     }
   };
 

@@ -45,16 +45,19 @@ const SignIn = () => {
   });
 
   const onSubmit = async (data: FormData) => {
-    const { email, password } = data;
-    const resultAction = await dispatch(signinUser({ email, password }));
-    if (signinUser.fulfilled.match(resultAction)) {
-      await localforage.setItem('authToken', resultAction.payload.data.token);
-      toast.success('Login berhasil');
-      // setTimeout(() => {
-      navigate('/');
-      // }, 2500);
-    } else {
-      toast.error('Login gagal. Periksa email dan password Anda.');
+    try {
+      const { email, password } = data;
+      const resultAction = await dispatch(signinUser({ email, password }));
+      if (signinUser.fulfilled.match(resultAction)) {
+        await localforage.setItem('authToken', resultAction.payload.data.token);
+        toast.success(`${resultAction?.payload?.message}`);
+        navigate('/');
+      } else {
+        toast.error(`${resultAction?.payload}`);
+      }
+    } catch (error) {
+      console.log('error', error);
+      toast.error('Terjadi kesalahan. Silakan coba lagi nanti.');
     }
   };
 

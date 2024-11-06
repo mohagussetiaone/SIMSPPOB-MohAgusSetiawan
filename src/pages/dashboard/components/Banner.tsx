@@ -13,6 +13,8 @@ const Banner: React.FC = () => {
   const { profile } = useSelector((state: RootState) => state.profile);
   const { balance } = useSelector((state: RootState) => state.balance);
 
+  console.log('profile', profile);
+
   useEffect(() => {
     dispatch(fetchProfile());
     dispatch(fetchBalance());
@@ -28,7 +30,12 @@ const Banner: React.FC = () => {
         <div className="col-span-1 md:col-span-5">
           <div className="flex flex-col">
             <img
-              src={profile?.data.profile_image || ProfileImage}
+              src={
+                profile?.data?.profile_image &&
+                !profile.data.profile_image.includes('null')
+                  ? profile.data.profile_image
+                  : ProfileImage
+              }
               alt="Profile"
               className="w-20 h-auto object-cover rounded-full"
             />

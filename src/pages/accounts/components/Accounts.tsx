@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Input } from '@/components/ui/input';
-import { AtSign, User, Pencil } from 'lucide-react';
-import ProfileImage from '@/assets/images/profile/ProfilePhoto.png';
-import { Button } from '@/components/ui/button';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import ProfileImage from '@/assets/images/profile/ProfilePhoto.png';
+import { AtSign, User, Pencil } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchProfile,
@@ -80,13 +80,17 @@ const Accounts: React.FC = () => {
       last_name: data.last_name,
     };
     try {
-      const updateProfileData = await dispatch(putProfile(payload));
-      console.log('updateProfileData', updateProfileData);
+      const resultAction = await dispatch(putProfile(payload));
+      console.log('resultAction', resultAction);
       dispatch(fetchProfile());
-      toast.success('Updated profile successfully');
+      if (putProfile.fulfilled.match(resultAction)) {
+        dispatch(fetchProfile());
+        toast.success(`${resultAction?.payload?.message}`);
+      } else {
+        toast.error(`${resultAction?.payload}`);
+      }
     } catch (error) {
-      console.error('Error updating profile:', error);
-      toast.error('Failed to update profile');
+      toast.error('Failed to update profile' + error);
     }
   };
 
@@ -95,16 +99,22 @@ const Accounts: React.FC = () => {
     fileReader.onloadend = () => {
       setProfileImagePreview(fileReader.result as string);
     };
-    fileReader.readAsDataURL(file);
-    setIsModalOpen(false);
-    dispatch(updateProfileImage(file))
-      .unwrap()
-      .then(() => {
-        dispatch(fetchProfile());
-      })
-      .catch((error) => {
-        toast.error(`Failed to upload profile image: ${error}`);
-      });
+
+    try {
+      fileReader.readAsDataURL(file);
+      setIsModalOpen(false);
+      dispatch(updateProfileImage(file))
+        .unwrap()
+        .then(() => {
+          dispatch(fetchProfile());
+          toast.success('Profile image updated successfully');
+        })
+        .catch((error) => {
+          toast.error(`Failed to upload profile image: ${error}`);
+        });
+    } catch (error) {
+      toast.error(`An error occurred: ${error}`);
+    }
   };
 
   const handleLogout = async () => {
@@ -148,7 +158,12 @@ const Accounts: React.FC = () => {
               <div className="flex flex-col gap-2 text-center text-sm font-medium text-black relative">
                 <div className="relative w-28 h-full mx-auto">
                   <img
-                    src={profile?.data?.profile_image || profileImagePreview}
+                    src={
+                      profile?.data?.profile_image &&
+                      !profile.data.profile_image.includes('null')
+                        ? profile.data.profile_image
+                        : profileImagePreview
+                    }
                     className="w-28 h-full object-cover rounded-full"
                     alt="Profile"
                   />
@@ -172,7 +187,6 @@ const Accounts: React.FC = () => {
               </div>
             </div>
           </div>
-
           <form onSubmit={handleSubmit(onSubmit, onError)} className="mt-5">
             <div className="space-y-10">
               <div className="h-10 w-full">
