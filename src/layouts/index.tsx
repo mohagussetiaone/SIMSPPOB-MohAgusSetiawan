@@ -13,7 +13,7 @@ export default function Layout() {
           <div className="h-full">
             <Navbar />
             {!isAccountsPage && <Banner />}
-            <div className="mx-auto mb-auto h-auto min-h-[70vh]">
+            <div className="mx-auto mb-auto h-auto min-h-[70vh] px-4">
               <Outlet />
             </div>
           </div>

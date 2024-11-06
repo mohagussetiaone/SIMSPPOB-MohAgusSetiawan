@@ -16,7 +16,7 @@ const ServiceCategory: React.FC = () => {
   }, [dispatch]);
 
   return (
-    <div className="w-full py-6 px-4 md:px-0">
+    <section className="w-full py-6">
       <div className="flex gap-3 md:gap-0 flex-wrap justify-start">
         {services?.data?.map((service, index) => (
           <div
@@ -40,7 +40,7 @@ const ServiceCategory: React.FC = () => {
           </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 };
 
