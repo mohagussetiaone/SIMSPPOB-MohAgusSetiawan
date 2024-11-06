@@ -9,11 +9,7 @@ const ServiceCategory: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { setServiceDetail } = useServiceDetail();
-  const { services, status, error } = useSelector(
-    (state: RootState) => state.services
-  );
-
-  console.log('data services', services);
+  const { services } = useSelector((state: RootState) => state.services);
 
   useEffect(() => {
     dispatch(fetchServices());

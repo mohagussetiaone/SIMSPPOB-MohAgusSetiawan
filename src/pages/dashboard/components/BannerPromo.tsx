@@ -7,8 +7,6 @@ const BannerPromo: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { banner } = useSelector((state: RootState) => state.banner);
 
-  console.log('dataBanner', banner);
-
   useEffect(() => {
     dispatch(fetchBanner());
   }, [dispatch]);

@@ -13,7 +13,6 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store/store';
 import { signupUser } from '@/features/membership/authThunks';
 
-// Schema Validasi Yup
 const schema = Yup.object({
   email: Yup.string()
     .email('Parameter email tidak sesuai format')
@@ -65,18 +64,15 @@ const SignUp = () => {
   });
 
   const onSubmit = async (data: FormData) => {
-    console.log('data', data);
     const { email, first_name, last_name, password } = data;
     const resultAction = await dispatch(
       signupUser({ email, first_name, last_name, password })
     );
     if (signupUser.fulfilled.match(resultAction)) {
-      console.log('Login berhasil:', resultAction.payload);
       toast.success('Akun berhasil dibuat');
       navigate('/signin');
     } else {
       toast.error('Login gagal. Periksa email dan password Anda.');
-      console.log('Login gagal:', resultAction.payload);
     }
   };
 

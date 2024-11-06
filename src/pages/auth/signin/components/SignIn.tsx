@@ -48,7 +48,6 @@ const SignIn = () => {
     const { email, password } = data;
     const resultAction = await dispatch(signinUser({ email, password }));
     if (signinUser.fulfilled.match(resultAction)) {
-      console.log('Login berhasil:', resultAction.payload);
       await localforage.setItem('authToken', resultAction.payload.data.token);
       toast.success('Login berhasil');
       // setTimeout(() => {
@@ -56,7 +55,6 @@ const SignIn = () => {
       // }, 2500);
     } else {
       toast.error('Login gagal. Periksa email dan password Anda.');
-      console.log('Login gagal:', resultAction.payload);
     }
   };
 

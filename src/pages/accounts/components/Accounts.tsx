@@ -43,10 +43,6 @@ const Accounts: React.FC = () => {
   >(profile?.data?.profile_image ? profile?.data?.profile_image : ProfileImage);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  console.log('status', status);
-  console.log('profile', profile);
-  console.log('profileImagePreview', profileImagePreview);
-
   const {
     control,
     watch,
