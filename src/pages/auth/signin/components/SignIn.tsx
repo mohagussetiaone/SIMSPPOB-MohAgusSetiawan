@@ -51,7 +51,9 @@ const SignIn = () => {
       if (signinUser.fulfilled.match(resultAction)) {
         await localforage.setItem('authToken', resultAction.payload.data.token);
         toast.success(`${resultAction?.payload?.message}`);
-        navigate('/');
+        setTimeout(() => {
+          navigate('/');
+        }, 1500);
       } else {
         toast.error(`${resultAction?.payload}`);
       }

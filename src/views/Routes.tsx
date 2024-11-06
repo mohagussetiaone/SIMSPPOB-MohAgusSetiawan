@@ -8,13 +8,13 @@ interface RoutesProps {
 
 const Routes: React.FC<RoutesProps> = ({ onNavigate }) => {
   return (
-    <ul className="flex flex-col justify-start p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white">
+    <ul className="flex flex-col gap-2 justify-start p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white">
       {routes.map((route) => (
         <li key={route.name} onClick={() => onNavigate(route.to)}>
           <NavLink
             to={route.to}
             className={({ isActive }) =>
-              `block py-2 px-3 rounded hover:text-[#F42619] md:p-0 ${isActive ? 'underline-offset-4 text-primary decoration-brand-600' : 'text-gray-900'}`
+              `block py-2 px-3 text-center rounded md:border-none border border-gray-600 hover:border-primary hover:text-[#F42619] md:p-0 ${isActive ? 'border-primary underline-offset-4 text-primary decoration-brand-600' : 'text-gray-900'}`
             }
           >
             {route.name}
