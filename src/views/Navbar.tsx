@@ -37,10 +37,10 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white sticky top-0 z-20 border-b border-gray-200">
-      <div className="w-full px-4 md:px-0 bg-white flex items-center justify-between mx-auto py-2">
-        <NavLink to="/" className="flex gap-2 justify-start">
-          <img src={logoSims} className="h-10" alt="SimsLogo.jpg" />
-          <h1 className="flex justify-center items-center text-2xl text-black font-semibold">
+      <div className="w-full p-4 md:px-0 bg-white flex items-center justify-between mx-auto">
+        <NavLink to="/" className="flex items-center gap-2 justify-start">
+          <img src={logoSims} className="h-6 text-center" alt="SimsLogo.jpg" />
+          <h1 className="flex justify-center items-center text-xl text-black font-semibold">
             SIMS PPOB
           </h1>
         </NavLink>

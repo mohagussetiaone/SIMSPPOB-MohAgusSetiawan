@@ -68,12 +68,12 @@ const Topup: React.FC = () => {
   };
 
   return (
-    <section className="p-4">
+    <section>
       <div className="flex flex-col justify-start">
         <h1 className="text-xl">Silahkan Masukan </h1>
         <p className="text-3xl font-semibold">Nominal Top Up</p>
         <div className="grid grid-cols-12 gap-4 mt-10">
-          <div className="col-span-12 md:col-span-8">
+          <div className="col-span-12 md:col-span-7">
             <form onSubmit={handleSubmit(onSubmit, onError)}>
               <div className="relative h-10 w-full">
                 <Controller
@@ -88,7 +88,7 @@ const Topup: React.FC = () => {
                       <Input
                         {...field}
                         type="number"
-                        placeholder="Masukkan Npminal Top Up"
+                        placeholder="masukkan nominal Top Up"
                         className={`pl-8 ${errors.top_up_amount ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-black'} border rounded-md  focus:ring-0`}
                         min={10000}
                         max={1000000}
@@ -102,7 +102,7 @@ const Topup: React.FC = () => {
                 type="submit"
                 disabled={!watch('top_up_amount')}
               >
-                Bayar
+                Top Up
               </Button>
             </form>
           </div>
@@ -111,7 +111,7 @@ const Topup: React.FC = () => {
               {nominalOptions.map((top_up_amount) => (
                 <div
                   key={top_up_amount}
-                  className="flex h-10 items-center justify-center cursor-pointer border border-gray-400 hover:border-gray-600 rounded-md"
+                  className="flex h-10 items-center justify-center cursor-pointer border border-gray-300 hover:border-gray-600 rounded-md"
                   onClick={() => handleNominalClick(top_up_amount)}
                 >
                   <span className="whitespace-nowrap text-xs md:text-sm">

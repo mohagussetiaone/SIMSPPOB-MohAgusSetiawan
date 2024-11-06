@@ -82,7 +82,7 @@ const SignIn = () => {
             </span>
           </div>
           <div className="flex flex-col text-center text-xl font-medium text-black mt-10">
-            <span>Masuk Atau Buat akun</span>
+            <span>Masuk Atau buat akun</span>
             <span>Untuk Memulai</span>
           </div>
           <form onSubmit={handleSubmit(onSubmit, onError)} className="mt-10">
@@ -100,7 +100,7 @@ const SignIn = () => {
                       <Input
                         {...field}
                         type="text"
-                        placeholder="Masukkan Email Anda"
+                        placeholder="masukkan email Anda"
                         className={`pl-8 ${errors.email ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-black'} border rounded-md  focus:ring-0`}
                       />
                     </>
@@ -121,7 +121,7 @@ const SignIn = () => {
                       <Input
                         {...field}
                         type={showPassword ? 'text' : 'password'}
-                        placeholder="Masukkan Kata Sandi Anda"
+                        placeholder="masukkan password Anda"
                         className={`pl-8 ${errors.password ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-black'} border rounded-md  focus:ring-0 pr-8`}
                       />
                       <div
@@ -143,9 +143,9 @@ const SignIn = () => {
             <Button className="w-full mt-10" type="submit">
               Masuk
             </Button>
-            <div className="mt-6">
+            <div className="mt-6 text-center">
               <h6 className="text-gray-400">
-                belum punya akun ? registrasi ke sini{' '}
+                belum punya akun ? registrasi{' '}
                 <Link to="/signup" className="text-primary hover:text-red-600">
                   di sini
                 </Link>

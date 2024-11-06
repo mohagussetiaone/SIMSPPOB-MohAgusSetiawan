@@ -70,9 +70,9 @@ const Payment: React.FC = () => {
   };
 
   return (
-    <div className="p-4">
+    <section className="py-4">
       <div className="flex flex-col justify-start">
-        <h1 className="text-2xl">Pembayaran </h1>
+        <h1 className="text-2xl">PemBayaran </h1>
         <div className="flex gap-2 mt-2">
           <img
             src={serviceDetail?.service_icon}
@@ -111,7 +111,7 @@ const Payment: React.FC = () => {
           </Button>
         </form>
       </div>
-    </div>
+    </section>
   );
 };
 

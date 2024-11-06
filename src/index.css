@@ -96,12 +96,10 @@ a:hover {
 
 ::-webkit-scrollbar-track {
   background-color: #f1f1f1;
-  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
   background-color: #f13b2f;
-  border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {

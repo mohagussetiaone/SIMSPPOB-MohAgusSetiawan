@@ -69,10 +69,11 @@ const SignUp = () => {
       const resultAction = await dispatch(
         signupUser({ email, first_name, last_name, password })
       );
-
       if (signupUser.fulfilled.match(resultAction)) {
         toast.success(`${resultAction?.payload?.message}`);
-        navigate('/signin');
+        setTimeout(() => {
+          navigate('/signin');
+        }, 1500);
       } else {
         toast.error(`${resultAction?.payload}`);
       }
@@ -119,7 +120,7 @@ const SignUp = () => {
                       <Input
                         {...field}
                         type="text"
-                        placeholder="Masukkan Email Anda"
+                        placeholder="masukan email Anda"
                         className={`pl-8 ${errors.email ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-black'} border rounded-md  focus:ring-0`}
                       />
                     </>
@@ -140,7 +141,7 @@ const SignUp = () => {
                       <Input
                         {...field}
                         type="text"
-                        placeholder="Nama depan"
+                        placeholder="nama depan"
                         className={`pl-8 ${errors.first_name ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-black'} border rounded-md  focus:ring-0`}
                       />
                     </>
@@ -161,7 +162,7 @@ const SignUp = () => {
                       <Input
                         {...field}
                         type="text"
-                        placeholder="Nama belakang"
+                        placeholder="nama belakang"
                         className={`pl-8 ${errors.last_name ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-black'} border rounded-md  focus:ring-0`}
                       />
                     </>
@@ -182,7 +183,7 @@ const SignUp = () => {
                       <Input
                         {...field}
                         type={showPassword ? 'text' : 'password'}
-                        placeholder="Masukkan Kata Sandi Anda"
+                        placeholder="buat password"
                         className={`pl-8 ${errors.password ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-black'} border rounded-md  focus:ring-0 pr-8`}
                       />
                       <div
@@ -213,7 +214,7 @@ const SignUp = () => {
                       <Input
                         {...field}
                         type={showConfirmPassword ? 'text' : 'password'}
-                        placeholder="Masukkan Kata Sandi Anda"
+                        placeholder="konfirmasi password"
                         className={`pl-8 ${errors.confirmPassword ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-black'} border rounded-md  focus:ring-0 pr-8`}
                       />
                       <div
@@ -234,7 +235,7 @@ const SignUp = () => {
             <Button className="w-full mt-10" type="submit">
               Registrasi
             </Button>
-            <div className="mt-6">
+            <div className="mt-6 text-center">
               <h6 className="text-gray-400">
                 sudah punya akun ? login{' '}
                 <Link to="/signin" className="text-primary hover:text-red-600">

@@ -48,6 +48,7 @@ const Transaction: React.FC = () => {
     const newLimit = Number(e.target.value);
     setLimit(newLimit);
     setOffset(0);
+    setHasMore(true);
   };
 
   const isLoading = transactionHistoryStatus === 'loading';
@@ -58,13 +59,13 @@ const Transaction: React.FC = () => {
   }
 
   return (
-    <section className="p-4">
+    <section className="py-4">
       {isLoading && <Loading />}
-      <div className="flex justify-between">
+      <div className="flex justify-between mb-4">
         <div>
-          <h1 className="text-2xl mb-6 font-semibold">Semua Transaksi</h1>
+          <h1 className="text-xl font-semibold">Semua Transaksi</h1>
         </div>
-        <div className="mb-4">
+        <div>
           <label htmlFor="limitSelect" className="mr-2 text-sm font-medium">
             Tampilkan:
           </label>
@@ -76,7 +77,7 @@ const Transaction: React.FC = () => {
           >
             {ITEMS_PER_PAGE_OPTIONS.map((option) => (
               <option key={option} value={option}>
-                {option} item{option > 1 ? 's' : ''}
+                {option} items
               </option>
             ))}
           </select>
