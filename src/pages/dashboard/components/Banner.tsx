@@ -25,7 +25,7 @@ const Banner: React.FC = () => {
   };
 
   return (
-    <section className="grid grid-cols-1 md:grid-cols-12 gap-4 my-6 px-4">
+    <section className="grid grid-cols-1 md:grid-cols-12 gap-4 my-6 px-4 md:px-0">
       <div className="col-span-1 md:col-span-5">
         <div className="flex flex-col">
           <img
