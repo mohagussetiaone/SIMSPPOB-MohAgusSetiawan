@@ -62,10 +62,13 @@ const Accounts: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchProfile());
+    if (profile?.data?.profile_image?.includes('null')) {
+      window.location.reload();
+    }
   }, [dispatch]);
 
   useEffect(() => {
-    if (profile && profileStatus === 'succeeded') {
+    if (profile) {
       reset({
         email: profile?.data?.email,
         first_name: profile?.data?.first_name,
@@ -172,7 +175,7 @@ const Accounts: React.FC = () => {
                   <img
                     src={
                       profile?.data?.profile_image &&
-                      !profile.data.profile_image.includes('null')
+                      !profile.data.profile_image?.includes('null')
                         ? profile.data.profile_image
                         : profileImagePreview
                     }
