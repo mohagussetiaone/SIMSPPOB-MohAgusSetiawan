@@ -29,7 +29,7 @@ const UploadFile: React.FC<UploadFileProps> = ({
   const validateFile = (file: File) => {
     if (!file.type.startsWith('image/') || file.size > 100 * 1024) {
       setErrorMessage(
-        'File harus berupa gambar (PNG, JPG, dll) dan tidak lebih dari 100 KB.'
+        'File harus berupa gambar (PNG, JPG) dan tidak lebih dari 100 KB.'
       );
       setSelectedFile(null);
       setPreview(null);

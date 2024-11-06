@@ -37,7 +37,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white sticky top-0 z-20 border-b border-gray-200">
-      <div className="w-full p-4 md:px-0 bg-white flex items-center justify-between mx-auto">
+      <div className="w-full p-4 md:px-2 bg-white flex items-center justify-between mx-auto">
         <NavLink to="/" className="flex items-center gap-2 justify-start">
           <img src={logoSims} className="h-6 text-center" alt="SimsLogo.jpg" />
           <h1 className="flex justify-center items-center text-xl text-black font-semibold">
@@ -58,9 +58,9 @@ const Navbar = () => {
               <Menu className="w-8 h-8" />
             </Button>
           </SheetTrigger>
-          <SheetContent className="md:hidden">
+          <SheetContent className="md:hidden p-4">
             <SheetHeader>
-              <SheetTitle className="flex">All Menu</SheetTitle>
+              <SheetTitle className="flex mb-4">All Menu</SheetTitle>
               <Routes onNavigate={handleNavigate} />
             </SheetHeader>
           </SheetContent>

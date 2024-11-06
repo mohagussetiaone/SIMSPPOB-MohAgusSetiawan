@@ -27,29 +27,31 @@ const BannerPromo: React.FC = () => {
   };
 
   return (
-    <section className="scrollbar-hidden whitespace-nowrap">
+    <section>
       <h3 className="mb-6 font-semibold">Temukan promo menarik</h3>
-      {banner?.data?.map((service, index) => (
-        <div key={index} className="inline-block mr-4">
-          <Dialog>
-            <DialogTrigger asChild>
-              <img
-                src={service.banner_image}
-                alt={service.banner_name}
-                className="w-60 h-auto object-cover cursor-pointer"
-                onClick={() => handleBannerClick(service)}
-              />
-            </DialogTrigger>
-            <DialogContent className="p-0 rounded-xl">
-              <img
-                src={selectedBanner?.banner_image}
-                alt={selectedBanner?.banner_name}
-                className="w-full h-auto object-cover cursor-pointer"
-              />
-            </DialogContent>
-          </Dialog>
-        </div>
-      ))}
+      <div className="scrollbar-hidden whitespace-nowrap">
+        {banner?.data?.map((service, index) => (
+          <div key={index} className="inline-block mr-4">
+            <Dialog>
+              <DialogTrigger asChild>
+                <img
+                  src={service.banner_image}
+                  alt={service.banner_name}
+                  className="w-60 h-auto object-cover cursor-pointer"
+                  onClick={() => handleBannerClick(service)}
+                />
+              </DialogTrigger>
+              <DialogContent className="p-0 rounded-xl">
+                <img
+                  src={selectedBanner?.banner_image}
+                  alt={selectedBanner?.banner_name}
+                  className="w-full h-auto object-cover cursor-pointer"
+                />
+              </DialogContent>
+            </Dialog>
+          </div>
+        ))}
+      </div>
     </section>
   );
 };
